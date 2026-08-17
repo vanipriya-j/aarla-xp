@@ -3,7 +3,6 @@ import { HeroPrompt } from "@/components/home/hero-prompt";
 import { LovedCard, PlanCard } from "@/components/home/plan-card";
 import { ProviderStrip } from "@/components/home/provider-strip";
 import { KarmaChart } from "@/components/karma/karma-chart";
-import { AppShell } from "@/components/layout/app-shell";
 import { Icons } from "@/components/layout/icons";
 import { ExperienceImage } from "@/components/ui/experience-image";
 import { PendingLink } from "@/components/ui/pending-link";
@@ -17,14 +16,14 @@ export default async function HomePage() {
   const data = await getForYou();
 
   return (
-    <AppShell personName={data.person.name} locationLabel={data.person.locationLabel} avatarUrl={data.person.avatarUrl} theme="dark">
+    <>
       <div className="xl:hidden">
         <MobileHome data={data} />
       </div>
       <div className="hidden xl:block">
         <DesktopHome data={data} />
       </div>
-    </AppShell>
+    </>
   );
 }
 

@@ -1,7 +1,6 @@
-import { NavigationProgress } from "@/components/layout/navigation-progress";
+import { AppFrame } from "@/components/layout/app-frame";
 import type { Metadata } from "next";
 import { Fraunces, Outfit } from "next/font/google";
-import { Suspense } from "react";
 import "./globals.css";
 
 const outfit = Outfit({
@@ -23,10 +22,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${outfit.variable} ${fraunces.variable} h-full antialiased`}>
       <body className="min-h-full bg-cream font-sans text-ink">
-        <Suspense fallback={null}>
-          <NavigationProgress />
-        </Suspense>
-        {children}
+        <AppFrame>{children}</AppFrame>
       </body>
     </html>
   );
