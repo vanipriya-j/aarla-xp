@@ -1,0 +1,19 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: aarla
+      POSTGRES_PASSWORD: aarla
+      POSTGRES_DB: aarla_xp
+    ports:
+      - "5432:5432"
+    volumes:
+      - aarla_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U aarla -d aarla_xp"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  aarla_pg:
