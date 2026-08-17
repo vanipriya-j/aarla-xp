@@ -1,0 +1,89 @@
+@import "tailwindcss";
+
+:root {
+  --cream: #f7f5f2;
+  --cream-deep: #efe8dc;
+  --ink: #1a1814;
+  --ink-soft: #3d3832;
+  --mist: #8a847a;
+  --line: rgba(26, 24, 20, 0.08);
+  --purple: #6b4c9a;
+  --purple-deep: #553a7a;
+  --purple-soft: #ede6f5;
+  --dark: #12110f;
+  --dark-card: #1c1a17;
+  --paper: #fffdf9;
+  --karma-move: #e07a3d;
+  --karma-create: #d46a8a;
+  --karma-explore: #3d9b8f;
+  --karma-culture: #4a7cb5;
+  --karma-social: #5b9a5b;
+  --karma-rest: #9b8ec4;
+  --karma-learn: #c9a227;
+  --karma-play: #e07a6a;
+}
+
+@theme inline {
+  --color-cream: var(--cream);
+  --color-cream-deep: var(--cream-deep);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-mist: var(--mist);
+  --color-line: var(--line);
+  --color-purple: var(--purple);
+  --color-purple-deep: var(--purple-deep);
+  --color-purple-soft: var(--purple-soft);
+  --color-dark: var(--dark);
+  --color-dark-card: var(--dark-card);
+  --color-paper: var(--paper);
+  --color-karma-move: var(--karma-move);
+  --color-karma-create: var(--karma-create);
+  --color-karma-explore: var(--karma-explore);
+  --color-karma-culture: var(--karma-culture);
+  --color-karma-social: var(--karma-social);
+  --color-karma-rest: var(--karma-rest);
+  --color-karma-learn: var(--karma-learn);
+  --color-karma-play: var(--karma-play);
+  --font-sans: var(--font-outfit);
+  --font-serif: var(--font-fraunces);
+  --radius-card: 1.75rem;
+}
+
+html {
+  background: var(--cream);
+}
+
+body {
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+}
+
+h1,
+h2,
+.serif {
+  font-family: var(--font-fraunces), ui-serif, Georgia, serif;
+}
+
+::selection {
+  background: var(--purple-soft);
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
