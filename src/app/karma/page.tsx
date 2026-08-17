@@ -1,8 +1,8 @@
 import { getForYou, getKarma } from "@/application/contracts";
 import { KarmaBars, KarmaChart } from "@/components/karma/karma-chart";
 import { AppShell } from "@/components/layout/app-shell";
+import { PendingLink } from "@/components/ui/pending-link";
 import { ensureSeeded } from "@/db/ensure";
-import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
@@ -25,9 +25,9 @@ export default async function KarmaPage() {
           </div>
         </div>
         <p className="mt-6 text-sm leading-6 text-ink-soft">{data.nudge.body}</p>
-        <Link href="/ask?q=Surprise%20me%20this%20weekend." className="mt-6 inline-flex rounded-full bg-purple px-4 py-2 text-sm text-white">
+        <PendingLink href="/ask?q=Surprise%20me%20this%20weekend." pendingLabel="Thinking…" className="mt-6 inline-flex rounded-full bg-purple px-4 py-2 text-sm text-white">
           Show me a different kind of time
-        </Link>
+        </PendingLink>
       </div>
     </AppShell>
   );

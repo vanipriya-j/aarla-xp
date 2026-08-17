@@ -1,9 +1,11 @@
 "use client";
 
 import { Icons } from "@/components/layout/icons";
+import { Spinner } from "@/components/ui/spinner";
 import { NAV_ITEMS } from "@/lib/constants";
 import { cn } from "@/lib/cn";
 import Link from "next/link";
+import { useLinkStatus } from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 
@@ -57,6 +59,7 @@ export function AppShell({
               >
                 <Icon className="h-4 w-4" />
                 {item.label}
+                <NavPending className="ml-auto" />
               </Link>
             );
           })}
@@ -97,12 +100,13 @@ export function AppShell({
                 key={item.label}
                 href={item.href}
                 className={cn(
-                  "flex min-w-[64px] flex-col items-center gap-1 rounded-2xl px-2 py-1.5 text-[11px]",
+                  "relative flex min-w-[64px] flex-col items-center gap-1 rounded-2xl px-2 py-1.5 text-[11px]",
                   active ? "text-white" : "text-white/45",
                 )}
               >
                 <Icon className={cn("h-5 w-5", active && "text-[#c4b0e8]")} />
                 {item.label}
+                <NavPending className="absolute right-1 top-1 h-2.5 w-2.5 border-[#c4b0e8]" />
               </Link>
             );
           })}
@@ -110,4 +114,10 @@ export function AppShell({
       </nav>
     </div>
   );
+}
+
+function NavPending({ className }: { className?: string }) {
+  const { pending } = useLinkStatus();
+  if (!pending) return null;
+  return <Spinner className={cn("h-3.5 w-3.5", className)} />;
 }

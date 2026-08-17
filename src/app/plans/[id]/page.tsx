@@ -1,6 +1,7 @@
 import { getForYou, getPlan } from "@/application/contracts";
 import { AppShell } from "@/components/layout/app-shell";
 import { PlanTimeline } from "@/components/plans/timeline";
+import { PlanFollowUp } from "@/components/plans/plan-follow-up";
 import { ResultActions } from "@/components/recommendations/result-actions";
 import { ExperienceImage } from "@/components/ui/experience-image";
 import { ensureSeeded } from "@/db/ensure";
@@ -62,12 +63,7 @@ export default async function PlanDetailPage({
 
           <div className="mt-6 flex flex-wrap gap-3">
             <ResultActions planId={plan.id} personId={plan.personId} />
-            <button type="button" className="rounded-full bg-purple px-5 py-2 text-sm text-white">
-              Continue
-            </button>
-            <button type="button" className="rounded-full bg-white px-5 py-2 text-sm ring-1 ring-line">
-              Share plan
-            </button>
+            <PlanFollowUp planId={plan.id} personId={plan.personId} title={plan.title} />
           </div>
         </div>
       </article>

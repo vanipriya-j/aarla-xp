@@ -1,8 +1,8 @@
 import { getForYou, getPlans } from "@/application/contracts";
 import { PlanCard } from "@/components/home/plan-card";
 import { AppShell } from "@/components/layout/app-shell";
+import { PendingLink } from "@/components/ui/pending-link";
 import { ensureSeeded } from "@/db/ensure";
-import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
@@ -26,13 +26,13 @@ export default async function PlansPage({
             ["saved", "Saved"],
             ["done", "Done"],
           ].map(([key, label]) => (
-            <Link
+            <PendingLink
               key={key}
               href={`/plans?tab=${key}`}
               className={`rounded-full px-4 py-2 text-sm ring-1 ring-line ${tab === key.toUpperCase() ? "bg-ink text-white" : "bg-white"}`}
             >
               {label}
-            </Link>
+            </PendingLink>
           ))}
         </div>
         <div className="mt-8 grid gap-5 md:grid-cols-2">
