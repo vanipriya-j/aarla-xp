@@ -12,4 +12,4 @@ npm test
 npm run dev
 ```
 
-Production database is **Supabase Postgres**. Vercel needs `DATABASE_URL` (pooler, port 6543) and `DIRECT_URL` (direct, port 5432).
+Production database is **Supabase Postgres**. Vercel needs `DATABASE_URL` (pooler, port 6543) and `DIRECT_URL` (direct, port 5432). All XP tables are prefixed `xp_`.
