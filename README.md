@@ -15,6 +15,8 @@ This is not an events directory, a marketplace, or a chatbot. The unit of recomm
 
 We use Supabase as the Postgres host only. Auth, Storage, and the Supabase JS client are not part of this build.
 
+All Aarla XP tables are prefixed `xp_` (`xp_people`, `xp_plans`, `xp_activities`, …) so they can live in the same database as aarla-os without colliding.
+
 ## Supabase + Vercel
 
 ### 1. Create a Supabase project
