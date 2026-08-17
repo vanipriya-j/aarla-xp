@@ -1,0 +1,443 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Person {
+  id            String   @id
+  name          String
+  email         String?  @unique
+  locationLabel String
+  city          String
+  country       String
+  avatarUrl     String?
+  isDemo        Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  circles         Circle[]
+  preferences     Preference[]
+  memories        Memory[]
+  memoryProposals MemoryProposal[]
+  intents         LeisureIntent[]
+  plans           Plan[]
+  interactions    Interaction[]
+  experiences     LeisureExperience[]
+  recommendations Recommendation[]
+  bookings        Booking[]
+  favorites       Favorite[]
+}
+
+model Circle {
+  id            String   @id
+  personId      String
+  person        Person   @relation(fields: [personId], references: [id], onDelete: Cascade)
+  name          String
+  slug          String
+  relationship  String?
+  description   String?
+  inferred      Boolean  @default(true)
+  avatarHint    String?
+  memberSummary String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  members     CircleMember[]
+  preferences Preference[]
+  memories    Memory[]
+  intents     LeisureIntent[]
+  plans       Plan[]
+  experiences LeisureExperience[]
+
+  @@unique([personId, slug])
+}
+
+model CircleMember {
+  id           String  @id @default(cuid())
+  circleId     String
+  circle       Circle  @relation(fields: [circleId], references: [id], onDelete: Cascade)
+  displayName  String
+  relationship String?
+  ageBand      String?
+  notes        String?
+}
+
+model Preference {
+  id         String   @id @default(cuid())
+  personId   String
+  person     Person   @relation(fields: [personId], references: [id], onDelete: Cascade)
+  circleId   String?
+  circle     Circle?  @relation(fields: [circleId], references: [id], onDelete: SetNull)
+  type       String
+  key        String
+  value      String
+  weight     Float    @default(1)
+  source     String
+  confidence Float    @default(1)
+  narrative  String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Memory {
+  id              String    @id @default(cuid())
+  personId        String
+  person          Person    @relation(fields: [personId], references: [id], onDelete: Cascade)
+  circleId        String?
+  circle          Circle?   @relation(fields: [circleId], references: [id], onDelete: SetNull)
+  subjectType     String
+  layer           String
+  category        String
+  statement       String
+  confidence      Float
+  status          String    @default("ACTIVE")
+  source          String
+  createdAt       DateTime  @default(now())
+  lastConfirmedAt DateTime?
+  evidence        MemoryEvidence[]
+}
+
+model MemoryEvidence {
+  id        String   @id @default(cuid())
+  memoryId  String
+  memory    Memory   @relation(fields: [memoryId], references: [id], onDelete: Cascade)
+  kind      String
+  refId     String?
+  excerpt   String?
+  createdAt DateTime @default(now())
+}
+
+model MemoryProposal {
+  id           String   @id @default(cuid())
+  personId     String
+  person       Person   @relation(fields: [personId], references: [id], onDelete: Cascade)
+  subjectType  String
+  subjectId    String
+  statement    String
+  category     String
+  confidence   Float
+  mutation     String
+  evidenceJson String
+  status       String   @default("PENDING")
+  createdAt    DateTime @default(now())
+}
+
+model LeisureIntent {
+  id                  String    @id @default(cuid())
+  personId            String
+  person              Person    @relation(fields: [personId], references: [id], onDelete: Cascade)
+  circleId            String?
+  circle              Circle?   @relation(fields: [circleId], references: [id], onDelete: SetNull)
+  rawInput            String
+  startAt             DateTime?
+  endAt               DateTime?
+  durationMinutes     Int?
+  startingLocation    String?
+  budgetAmount        Float?
+  budgetCurrency      String    @default("INR")
+  budgetScope         String?
+  budgetFlexibility   String?
+  companionsJson      String?
+  moodJson            String?
+  energy              String?
+  positiveIntentsJson String?
+  negativeIntentsJson String?
+  occasion            String?
+  visitorContext      String?
+  hardConstraintsJson String?
+  softPreferencesJson String?
+  inferredContextJson String?
+  createdAt           DateTime  @default(now())
+
+  recommendations Recommendation[]
+  plans           Plan[]
+}
+
+model Source {
+  id             String   @id
+  slug           String   @unique
+  name           String
+  type           String
+  baseUrl        String?
+  termsStatus    String?
+  robotsPolicy   String?
+  scrapeDecision String?
+  attribution    String?
+  health         String   @default("UNKNOWN")
+  createdAt      DateTime @default(now())
+
+  items     RawSourceItem[]
+  mappings  SourceMapping[]
+  fetchRuns FetchRun[]
+}
+
+model FetchRun {
+  id         String    @id @default(cuid())
+  sourceId   String
+  source     Source    @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  status     String
+  startedAt  DateTime  @default(now())
+  finishedAt DateTime?
+  itemCount  Int       @default(0)
+  notes      String?
+}
+
+model RawSourceItem {
+  id           String    @id @default(cuid())
+  sourceId     String
+  source       Source    @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  externalId   String
+  title        String?
+  rawPayload   String
+  fetchedAt    DateTime  @default(now())
+  lastSeenAt   DateTime  @default(now())
+  lastVerified DateTime?
+  mappings     SourceMapping[]
+
+  @@unique([sourceId, externalId])
+}
+
+model SourceMapping {
+  id              String         @id @default(cuid())
+  sourceId        String
+  source          Source         @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  rawItemId       String?
+  rawItem         RawSourceItem? @relation(fields: [rawItemId], references: [id], onDelete: SetNull)
+  entityType      String
+  entityId        String
+  similarityScore Float?
+}
+
+model Place {
+  id           String   @id
+  name         String
+  slug         String   @unique
+  neighborhood String?
+  city         String
+  address      String?
+  lat          Float?
+  lng          Float?
+  description  String?
+  imageUrl     String?
+  tagsJson     String?
+  openingHours String?
+  priceBand    String?
+  isSample     Boolean  @default(true)
+  provenance   String?
+  createdAt    DateTime @default(now())
+
+  activities Activity[]
+  events     Event[]
+  planSteps  PlanStep[]
+}
+
+model Activity {
+  id             String   @id
+  name           String
+  slug           String   @unique
+  placeId        String?
+  place          Place?   @relation(fields: [placeId], references: [id], onDelete: SetNull)
+  summary        String
+  description    String?
+  imageUrl       String?
+  durationMin    Int
+  effort         String
+  priceMin       Int?
+  priceMax       Int?
+  priceBand      String?
+  karmaJson      String
+  tagsJson       String?
+  audienceJson   String?
+  energy         String?
+  parentalEffort String?
+  travelEffort   String?
+  touristyScore  Float    @default(0.3)
+  quality        Float    @default(0.7)
+  isSample       Boolean  @default(true)
+  provenance     String?
+  createdAt      DateTime @default(now())
+
+  events      Event[]
+  experiences LeisureExperience[]
+  planSteps   PlanStep[]
+}
+
+model Event {
+  id           String    @id
+  name         String
+  slug         String    @unique
+  activityId   String?
+  activity     Activity? @relation(fields: [activityId], references: [id], onDelete: SetNull)
+  placeId      String?
+  place        Place?    @relation(fields: [placeId], references: [id], onDelete: SetNull)
+  startsAt     DateTime?
+  endsAt       DateTime?
+  summary      String?
+  imageUrl     String?
+  priceMin     Int?
+  priceMax     Int?
+  availability String?
+  isSample     Boolean   @default(true)
+  provenance   String?
+  createdAt    DateTime  @default(now())
+
+  planSteps PlanStep[]
+}
+
+model Recommendation {
+  id            String         @id @default(cuid())
+  personId      String
+  person        Person         @relation(fields: [personId], references: [id], onDelete: Cascade)
+  intentId      String?
+  intent        LeisureIntent? @relation(fields: [intentId], references: [id], onDelete: SetNull)
+  planId        String?
+  plan          Plan?          @relation(fields: [planId], references: [id], onDelete: SetNull)
+  label         String
+  title         String
+  reason        String
+  finalScore    Float
+  ranking       Int
+  signalsJson   String
+  engineVersion String
+  createdAt     DateTime       @default(now())
+}
+
+model Plan {
+  id                String         @id
+  personId          String
+  person            Person         @relation(fields: [personId], references: [id], onDelete: Cascade)
+  circleId          String?
+  circle            Circle?        @relation(fields: [circleId], references: [id], onDelete: SetNull)
+  intentId          String?
+  intent            LeisureIntent? @relation(fields: [intentId], references: [id], onDelete: SetNull)
+  title             String
+  personality       String?
+  explanation       String
+  startAt           DateTime?
+  endAt             DateTime?
+  durationMinutes   Int
+  estimatedSpendMin Int?
+  estimatedSpendMax Int?
+  currency          String         @default("INR")
+  status            String
+  stopCount         Int            @default(0)
+  effort            String?
+  imageUrl          String?
+  isSample          Boolean        @default(false)
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  steps           PlanStep[]
+  recommendations Recommendation[]
+  bookings        Booking[]
+}
+
+model PlanStep {
+  id          String    @id @default(cuid())
+  planId      String
+  plan        Plan      @relation(fields: [planId], references: [id], onDelete: Cascade)
+  sortOrder   Int
+  kind        String
+  title       String
+  description String?
+  startsAt    DateTime?
+  durationMin Int
+  placeId     String?
+  place       Place?    @relation(fields: [placeId], references: [id], onDelete: SetNull)
+  activityId  String?
+  activity    Activity? @relation(fields: [activityId], references: [id], onDelete: SetNull)
+  eventId     String?
+  event       Event?    @relation(fields: [eventId], references: [id], onDelete: SetNull)
+  actionKind  String?
+  status      String    @default("PLANNED")
+}
+
+model Interaction {
+  id         String   @id @default(cuid())
+  personId   String
+  person     Person   @relation(fields: [personId], references: [id], onDelete: Cascade)
+  type       String
+  targetType String
+  targetId   String
+  reason     String?
+  circleId   String?
+  createdAt  DateTime @default(now())
+}
+
+model LeisureExperience {
+  id            String    @id
+  personId      String
+  person        Person    @relation(fields: [personId], references: [id], onDelete: Cascade)
+  circleId      String?
+  circle        Circle?   @relation(fields: [circleId], references: [id], onDelete: SetNull)
+  activityId    String?
+  activity      Activity? @relation(fields: [activityId], references: [id], onDelete: SetNull)
+  title         String
+  happenedAt    DateTime
+  durationMin   Int?
+  loved         Boolean   @default(false)
+  notes         String?
+  karmaJson     String
+  createdAt     DateTime  @default(now())
+
+  contributions KarmaContribution[]
+}
+
+model KarmaContribution {
+  id           String            @id @default(cuid())
+  experienceId String
+  experience   LeisureExperience @relation(fields: [experienceId], references: [id], onDelete: Cascade)
+  dimension    String
+  weight       Float
+}
+
+model Provider {
+  id           String   @id
+  slug         String   @unique
+  name         String
+  category     String
+  status       String
+  logoHint     String?
+  capabilities ProviderCapability[]
+}
+
+model ProviderCapability {
+  id         String   @id @default(cuid())
+  providerId String
+  provider   Provider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  capability String
+  status     String
+}
+
+model Booking {
+  id           String    @id
+  personId     String
+  person       Person    @relation(fields: [personId], references: [id], onDelete: Cascade)
+  planId       String?
+  plan         Plan?     @relation(fields: [planId], references: [id], onDelete: SetNull)
+  kind         String
+  title        String
+  venue        String?
+  startsAt     DateTime?
+  status       String
+  providerSlug String?
+  reference    String?
+  imageUrl     String?
+  isMock       Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+}
+
+model Favorite {
+  id         String   @id @default(cuid())
+  personId   String
+  person     Person   @relation(fields: [personId], references: [id], onDelete: Cascade)
+  targetType String
+  targetId   String
+  title      String
+  imageUrl   String?
+  createdAt  DateTime @default(now())
+}
