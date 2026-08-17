@@ -1,11 +1,11 @@
+import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
 import { IMG } from "../src/lib/images";
+import { prismaCliUrl } from "../src/db/url";
 
-if (!process.env.DATABASE_URL) {
-  throw new Error("DATABASE_URL is required. Use the Supabase pooler URL, or a local Postgres URL.");
-}
-
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({
+  datasources: { db: { url: prismaCliUrl() } },
+});
 const PERSON = "person_vanipriya";
 
 type PlaceSeed = {

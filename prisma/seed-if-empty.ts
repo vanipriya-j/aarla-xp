@@ -1,7 +1,11 @@
+import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
+import { prismaCliUrl } from "../src/db/url";
 import { seedDatabase } from "./seed";
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({
+  datasources: { db: { url: prismaCliUrl() } },
+});
 
 async function main() {
   const count = await prisma.person.count();
