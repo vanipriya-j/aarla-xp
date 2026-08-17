@@ -20,8 +20,10 @@ fi
 echo "→ prisma generate"
 prisma generate
 
-echo "→ prisma migrate deploy"
-prisma migrate deploy
+# aarla-os already has tables in public, so `migrate deploy` fails with P3005.
+# db push creates missing xp_* tables and leaves existing aarla-os tables alone.
+echo "→ prisma db push (add xp_ tables beside aarla-os)"
+prisma db push --skip-generate --accept-data-loss=false
 
 echo "→ seed if empty"
 tsx prisma/seed-if-empty.ts

@@ -13,7 +13,7 @@
     "db:migrate": "prisma migrate deploy",
     "db:seed": "tsx prisma/seed.ts",
     "db:seed-if-empty": "tsx prisma/seed-if-empty.ts",
-    "db:setup": "prisma generate && prisma migrate deploy && tsx prisma/seed.ts",
+    "db:setup": "prisma generate && prisma db push && tsx prisma/seed.ts",
     "postinstall": "prisma generate"
   },
   "dependencies": {
