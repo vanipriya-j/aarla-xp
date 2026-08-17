@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Person {
@@ -30,6 +31,8 @@ model Person {
   recommendations Recommendation[]
   bookings        Booking[]
   favorites       Favorite[]
+
+  @@map("xp_people")
 }
 
 model Circle {
@@ -54,6 +57,7 @@ model Circle {
   experiences LeisureExperience[]
 
   @@unique([personId, slug])
+  @@map("xp_circles")
 }
 
 model CircleMember {
@@ -64,6 +68,8 @@ model CircleMember {
   relationship String?
   ageBand      String?
   notes        String?
+
+  @@map("xp_circle_members")
 }
 
 model Preference {
@@ -81,6 +87,8 @@ model Preference {
   narrative  String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+
+  @@map("xp_preferences")
 }
 
 model Memory {
@@ -99,6 +107,8 @@ model Memory {
   createdAt       DateTime  @default(now())
   lastConfirmedAt DateTime?
   evidence        MemoryEvidence[]
+
+  @@map("xp_memories")
 }
 
 model MemoryEvidence {
@@ -109,6 +119,8 @@ model MemoryEvidence {
   refId     String?
   excerpt   String?
   createdAt DateTime @default(now())
+
+  @@map("xp_memory_evidence")
 }
 
 model MemoryProposal {
@@ -124,6 +136,8 @@ model MemoryProposal {
   evidenceJson String
   status       String   @default("PENDING")
   createdAt    DateTime @default(now())
+
+  @@map("xp_memory_proposals")
 }
 
 model LeisureIntent {
@@ -155,6 +169,8 @@ model LeisureIntent {
 
   recommendations Recommendation[]
   plans           Plan[]
+
+  @@map("xp_leisure_intents")
 }
 
 model Source {
@@ -173,6 +189,8 @@ model Source {
   items     RawSourceItem[]
   mappings  SourceMapping[]
   fetchRuns FetchRun[]
+
+  @@map("xp_sources")
 }
 
 model FetchRun {
@@ -184,6 +202,8 @@ model FetchRun {
   finishedAt DateTime?
   itemCount  Int       @default(0)
   notes      String?
+
+  @@map("xp_fetch_runs")
 }
 
 model RawSourceItem {
@@ -199,6 +219,7 @@ model RawSourceItem {
   mappings     SourceMapping[]
 
   @@unique([sourceId, externalId])
+  @@map("xp_raw_source_items")
 }
 
 model SourceMapping {
@@ -210,6 +231,8 @@ model SourceMapping {
   entityType      String
   entityId        String
   similarityScore Float?
+
+  @@map("xp_source_mappings")
 }
 
 model Place {
@@ -233,6 +256,8 @@ model Place {
   activities Activity[]
   events     Event[]
   planSteps  PlanStep[]
+
+  @@map("xp_places")
 }
 
 model Activity {
@@ -264,6 +289,8 @@ model Activity {
   events      Event[]
   experiences LeisureExperience[]
   planSteps   PlanStep[]
+
+  @@map("xp_activities")
 }
 
 model Event {
@@ -286,6 +313,8 @@ model Event {
   createdAt    DateTime  @default(now())
 
   planSteps PlanStep[]
+
+  @@map("xp_events")
 }
 
 model Recommendation {
@@ -304,6 +333,8 @@ model Recommendation {
   signalsJson   String
   engineVersion String
   createdAt     DateTime       @default(now())
+
+  @@map("xp_recommendations")
 }
 
 model Plan {
@@ -334,6 +365,8 @@ model Plan {
   steps           PlanStep[]
   recommendations Recommendation[]
   bookings        Booking[]
+
+  @@map("xp_plans")
 }
 
 model PlanStep {
@@ -354,6 +387,8 @@ model PlanStep {
   event       Event?    @relation(fields: [eventId], references: [id], onDelete: SetNull)
   actionKind  String?
   status      String    @default("PLANNED")
+
+  @@map("xp_plan_steps")
 }
 
 model Interaction {
@@ -366,6 +401,8 @@ model Interaction {
   reason     String?
   circleId   String?
   createdAt  DateTime @default(now())
+
+  @@map("xp_interactions")
 }
 
 model LeisureExperience {
@@ -385,6 +422,8 @@ model LeisureExperience {
   createdAt     DateTime  @default(now())
 
   contributions KarmaContribution[]
+
+  @@map("xp_leisure_experiences")
 }
 
 model KarmaContribution {
@@ -393,6 +432,8 @@ model KarmaContribution {
   experience   LeisureExperience @relation(fields: [experienceId], references: [id], onDelete: Cascade)
   dimension    String
   weight       Float
+
+  @@map("xp_karma_contributions")
 }
 
 model Provider {
@@ -403,6 +444,8 @@ model Provider {
   status       String
   logoHint     String?
   capabilities ProviderCapability[]
+
+  @@map("xp_providers")
 }
 
 model ProviderCapability {
@@ -411,6 +454,8 @@ model ProviderCapability {
   provider   Provider @relation(fields: [providerId], references: [id], onDelete: Cascade)
   capability String
   status     String
+
+  @@map("xp_provider_capabilities")
 }
 
 model Booking {
@@ -429,6 +474,8 @@ model Booking {
   imageUrl     String?
   isMock       Boolean   @default(true)
   createdAt    DateTime  @default(now())
+
+  @@map("xp_bookings")
 }
 
 model Favorite {
@@ -440,4 +487,6 @@ model Favorite {
   title      String
   imageUrl   String?
   createdAt  DateTime @default(now())
+
+  @@map("xp_favorites")
 }

@@ -1,7 +1,9 @@
 import { PrismaClient } from "@prisma/client";
 import { IMG } from "../src/lib/images";
 
-process.env.DATABASE_URL ??= "file:./dev.db";
+if (!process.env.DATABASE_URL) {
+  throw new Error("DATABASE_URL is required. Use the Supabase pooler URL, or a local Postgres URL.");
+}
 
 const prisma = new PrismaClient();
 const PERSON = "person_vanipriya";
@@ -663,7 +665,8 @@ export async function seedDatabase() {
   await main();
 }
 
-if (process.argv[1]?.includes("seed")) {
+const invoked = process.argv[1] ?? "";
+if (invoked.endsWith("prisma/seed.ts") || invoked.endsWith("prisma/seed")) {
   main()
     .then(async () => {
       await prisma.$disconnect();
