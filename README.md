@@ -28,13 +28,13 @@ All Aarla XP tables are prefixed `xp_` (`xp_people`, `xp_plans`, `xp_activities`
 | Variable | Which string | Port | Used for |
 | --- | --- | --- | --- |
 | `DATABASE_URL` | Transaction pooler | `6543` | The Next.js app on Vercel |
-| `DIRECT_URL` | Direct connection | `5432` | `prisma migrate` during the Vercel build |
+| `DIRECT_URL` | Session pooler | `5432` | `prisma migrate` during the Vercel build |
 
-Append `?pgbouncer=true` to `DATABASE_URL`. Append `?sslmode=require` to `DIRECT_URL` if it is not already there.
+Both hosts should be `aws-0-ap-northeast-1.pooler.supabase.com`. Do **not** use `db.….supabase.co` on Vercel — that address is IPv6-only and the build will fail.
 
 ```bash
-DATABASE_URL="postgresql://postgres.YOUR_REF:YOUR_PASSWORD@aws-0-YOUR_REGION.pooler.supabase.com:6543/postgres?pgbouncer=true"
-DIRECT_URL="postgresql://postgres.YOUR_REF:YOUR_PASSWORD@db.YOUR_REF.supabase.co:5432/postgres?sslmode=require"
+DATABASE_URL="postgresql://postgres.YOUR_REF:YOUR_PASSWORD@aws-0-ap-northeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true"
+DIRECT_URL="postgresql://postgres.YOUR_REF:YOUR_PASSWORD@aws-0-ap-northeast-1.pooler.supabase.com:5432/postgres?sslmode=require"
 ```
 
 ### 2. Deploy on Vercel
