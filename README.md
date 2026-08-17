@@ -51,8 +51,8 @@ AARLA_AI_PROVIDER=mock
 3. Deploy. The Vercel build will:
 
 - generate the Prisma client
-- run `prisma migrate deploy`
-- seed the Vanipriya demo catalog if the database is empty
+- push the `xp_*` tables (the aarla-os schema is already in this database, so migrate deploy is not used)
+- seed the Vanipriya demo catalog if the XP tables are empty
 - build Next.js
 
 The first deploy creates the schema and demo data. Later deploys will not wipe the database.
