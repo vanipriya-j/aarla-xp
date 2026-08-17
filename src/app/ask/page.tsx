@@ -3,10 +3,10 @@ import { HeroPrompt } from "@/components/home/hero-prompt";
 import { AppShell } from "@/components/layout/app-shell";
 import { ResultActions } from "@/components/recommendations/result-actions";
 import { ExperienceImage } from "@/components/ui/experience-image";
+import { PendingLink } from "@/components/ui/pending-link";
 import { ensureSeeded } from "@/db/ensure";
 import { formatDuration, priceBandLabel } from "@/lib/cn";
 import { DEMO_PERSON_ID } from "@/lib/constants";
-import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
@@ -67,9 +67,9 @@ export default async function AskPage({
                 </p>
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <ResultActions planId={rec.plan.id} personId={result.intent.personId || DEMO_PERSON_ID} />
-                  <Link href={`/plans/${rec.plan.id}`} className="rounded-full bg-purple px-4 py-2 text-sm text-white">
+                  <PendingLink href={`/plans/${rec.plan.id}`} pendingLabel="Opening…" className="rounded-full bg-purple px-4 py-2 text-sm text-white">
                     Open plan
-                  </Link>
+                  </PendingLink>
                 </div>
               </div>
             </article>

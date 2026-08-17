@@ -6,9 +6,9 @@ import { KarmaChart } from "@/components/karma/karma-chart";
 import { AppShell } from "@/components/layout/app-shell";
 import { Icons } from "@/components/layout/icons";
 import { ExperienceImage } from "@/components/ui/experience-image";
+import { PendingLink } from "@/components/ui/pending-link";
 import { ensureSeeded } from "@/db/ensure";
 import { IMG } from "@/lib/images";
-import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
@@ -41,12 +41,12 @@ function MobileHome({ data }: { data: Awaited<ReturnType<typeof getForYou>> }) {
         <h2 className="text-sm uppercase tracking-[0.16em] text-white/45">Your Circles</h2>
         <div className="mt-4 flex gap-4 overflow-x-auto no-scrollbar">
           {data.circles.map((circle) => (
-            <Link key={circle.id} href={`/circles`} className="flex w-16 flex-col items-center gap-2">
+            <PendingLink key={circle.id} href={`/circles`} className="flex w-16 flex-col items-center gap-2">
               <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white/8 text-sm ring-1 ring-white/10">
                 {circle.name.slice(0, 1)}
               </div>
               <span className="text-center text-[11px] text-white/70">{circle.name}</span>
-            </Link>
+            </PendingLink>
           ))}
         </div>
       </section>
@@ -87,9 +87,9 @@ function DesktopHome({ data }: { data: Awaited<ReturnType<typeof getForYou>> }) 
           <Icons.bell className="h-4 w-4" />
           <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-purple text-[10px] text-white">3</span>
         </span>
-        <Link href="/ask" className="rounded-full bg-purple px-4 py-2 text-sm text-white">
+        <PendingLink href="/ask" pendingLabel="Opening…" className="rounded-full bg-purple px-4 py-2 text-sm text-white">
           + New plan
-        </Link>
+        </PendingLink>
       </header>
 
       <div className="grid grid-cols-[minmax(0,1fr)_320px] gap-8 px-8 pb-10">
@@ -112,9 +112,9 @@ function DesktopHome({ data }: { data: Awaited<ReturnType<typeof getForYou>> }) 
           <section className="mt-10">
             <div className="flex items-end justify-between">
               <h2 className="font-serif text-3xl">Handpicked for you</h2>
-              <Link href="/discover" className="text-sm text-mist">
+              <PendingLink href="/discover" className="text-sm text-mist">
                 View all experiences
-              </Link>
+              </PendingLink>
             </div>
             <div className="mt-5 grid grid-cols-2 gap-5">
               {data.handpicked.map((plan) => (
@@ -140,9 +140,9 @@ function DesktopHome({ data }: { data: Awaited<ReturnType<typeof getForYou>> }) 
             <div className="mt-4">
               <KarmaChart karma={data.karma} size={156} compact insight={data.insight} />
             </div>
-            <Link href="/karma" className="mt-4 inline-flex rounded-full bg-cream px-4 py-2 text-sm ring-1 ring-line">
+            <PendingLink href="/karma" pendingLabel="Opening…" className="mt-4 inline-flex rounded-full bg-cream px-4 py-2 text-sm ring-1 ring-line">
               See insights
-            </Link>
+            </PendingLink>
           </section>
 
           <section className="rounded-[28px] bg-paper p-5 ring-1 ring-line">
@@ -154,9 +154,9 @@ function DesktopHome({ data }: { data: Awaited<ReturnType<typeof getForYou>> }) 
                   <div>
                     <p className="text-sm font-medium">{booking.title}</p>
                     <p className="text-xs text-mist">{booking.venue}</p>
-                    <Link href="/bookings" className="text-xs text-purple">
+                    <PendingLink href="/bookings" className="text-xs text-purple">
                       View ticket
-                    </Link>
+                    </PendingLink>
                   </div>
                 </div>
               ))}
@@ -169,9 +169,9 @@ function DesktopHome({ data }: { data: Awaited<ReturnType<typeof getForYou>> }) 
               <p className="text-xs uppercase tracking-[0.16em] text-mist">XP Nudge</p>
               <h3 className="mt-2 font-serif text-2xl">{data.nudge.title}</h3>
               <p className="mt-2 text-sm leading-6 text-ink-soft">{data.nudge.body}</p>
-              <Link href="/ask?q=Surprise%20me%20this%20weekend." className="mt-4 inline-flex rounded-full bg-purple px-4 py-2 text-sm text-white">
+              <PendingLink href="/ask?q=Surprise%20me%20this%20weekend." pendingLabel="Thinking…" className="mt-4 inline-flex rounded-full bg-purple px-4 py-2 text-sm text-white">
                 Show me ideas
-              </Link>
+              </PendingLink>
             </div>
           </section>
         </aside>

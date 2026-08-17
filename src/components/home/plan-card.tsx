@@ -1,7 +1,7 @@
 import { ExperienceImage } from "@/components/ui/experience-image";
+import { PendingLink } from "@/components/ui/pending-link";
 import type { Plan } from "@/domains/types";
 import { formatDuration, formatSpend, priceBandLabel } from "@/lib/cn";
-import Link from "next/link";
 
 export function PlanCard({
   plan,
@@ -36,12 +36,13 @@ export function PlanCard({
         <p className="text-sm leading-6 text-ink-soft">{reason ?? plan.explanation}</p>
         <div className="flex items-center justify-between pt-1">
           <p className="text-sm text-mist">{formatSpend(plan.estimatedSpendMin, plan.estimatedSpendMax)}</p>
-          <Link
+          <PendingLink
             href={destination}
+            pendingLabel="Opening…"
             className="rounded-full bg-purple px-4 py-2 text-sm text-white transition hover:bg-purple-deep"
           >
             See plan
-          </Link>
+          </PendingLink>
         </div>
       </div>
     </article>
