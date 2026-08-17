@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { LeisureAgent } from "@/application/leisure-agent/agent";
 import { createPrismaTools } from "@/application/leisure-agent/tools";
 import type { AgentResult } from "@/application/leisure-agent/types";
@@ -10,10 +11,10 @@ import { applyRejectionToMemory, shouldTouchAffinity, validateMemoryProposal } f
 import { PROVIDERS } from "@/services/providers";
 import { listConnectors } from "@/services/sources";
 
-export async function getDemoPersonId() {
+export const getDemoPersonId = cache(async () => {
   const demo = await prisma.person.findFirst({ where: { isDemo: true } });
   return demo?.id ?? DEMO_PERSON_ID;
-}
+});
 
 export async function submitLeisurePrompt(input: {
   text: string;
@@ -25,7 +26,7 @@ export async function submitLeisurePrompt(input: {
   return agent.consider(input.text, personId, input.circleId);
 }
 
-export async function getForYou(personId?: string) {
+export const getForYou = cache(async (personId?: string) => {
   const id = personId ?? (await getDemoPersonId());
   const person = await prisma.person.findUniqueOrThrow({ where: { id } });
   const circles = await prisma.circle.findMany({ where: { personId: id }, include: { members: true } });
@@ -78,7 +79,7 @@ export async function getForYou(personId?: string) {
       "You seem to choose music when you're on your own, but experiences with a strong local story when you're hosting people.",
     nudge: karmaNudge(karma),
   };
-}
+});
 
 export async function getPlan(id: string) {
   const plan = await prisma.plan.findUnique({

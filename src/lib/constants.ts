@@ -2,6 +2,9 @@ export const DEMO_PERSON_ID = "person_vanipriya";
 
 export const ENGINE_VERSION = "leisure-agent.v0";
 
+export const DEFAULT_ASK_QUERY =
+  "I have 3 hours with friends from the US. Something very Chennai. Not too touristy. Budget around ₹3k.";
+
 export const AGENT_STATES = [
   "Understanding your plan...",
   "Looking at what fits...",
