@@ -25,6 +25,11 @@ prisma generate
 echo "→ prisma db push (add xp_ tables beside aarla-os)"
 prisma db push --skip-generate --accept-data-loss=false
 
+# PrismaClient defaults to DATABASE_URL. Transaction pooler (6543) + prepared
+# statements → Postgres 42P05 "prepared statement already exists". Prefer the
+# session pooler (DIRECT_URL, :5432) for seed.
+export DATABASE_URL="$DIRECT_URL"
+
 echo "→ seed if empty"
 tsx prisma/seed-if-empty.ts
 
