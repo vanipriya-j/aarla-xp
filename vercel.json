@@ -1,4 +1,4 @@
 {
   "framework": "nextjs",
-  "buildCommand": "prisma generate && prisma migrate deploy && tsx prisma/seed-if-empty.ts && next build"
+  "buildCommand": "bash scripts/vercel-build.sh"
 }
