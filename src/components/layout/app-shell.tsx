@@ -1,6 +1,7 @@
 "use client";
 
 import { Icons } from "@/components/layout/icons";
+import { NavigationProgress } from "@/components/layout/navigation-progress";
 import { Spinner } from "@/components/ui/spinner";
 import { NAV_ITEMS } from "@/lib/constants";
 import { cn } from "@/lib/cn";
@@ -26,19 +27,18 @@ export function AppShell({
   personName,
   locationLabel,
   avatarUrl,
-  theme = "cream",
 }: {
   children: ReactNode;
   personName: string;
   locationLabel: string;
   avatarUrl?: string;
-  theme?: "cream" | "dark";
 }) {
   const pathname = usePathname();
-  const dark = theme === "dark";
+  const dark = pathname === "/";
 
   return (
     <div className={cn("min-h-screen", dark ? "bg-dark text-white" : "bg-cream text-ink")}>
+      <NavigationProgress />
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-[260px] flex-col border-r border-line bg-paper px-5 py-6 xl:flex">
         <Link href="/" className="px-2">
           <p className="font-serif text-3xl tracking-tight">Aarla XP</p>

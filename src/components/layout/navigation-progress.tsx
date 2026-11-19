@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 export function startNavigation() {
@@ -23,9 +23,9 @@ function isInternalHref(href: string) {
   }
 }
 
-function sameDestination(href: string, pathname: string, search: string) {
+function sameDestination(href: string, pathname: string) {
   const url = new URL(href, window.location.href);
-  return url.pathname === pathname && url.search === search;
+  return url.pathname === pathname && url.search === window.location.search;
 }
 
 function rememberAskPrompt(href: string) {
@@ -41,15 +41,13 @@ function rememberAskPrompt(href: string) {
 
 export function NavigationProgress() {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const [pending, setPending] = useState(false);
-  const search = searchParams.toString() ? `?${searchParams.toString()}` : "";
   const arrivedAt = useRef(0);
 
   useEffect(() => {
     setPending(false);
     arrivedAt.current = Date.now();
-  }, [pathname, search]);
+  }, [pathname]);
 
   useEffect(() => {
     function begin() {
@@ -62,7 +60,7 @@ export function NavigationProgress() {
       const anchor = (event.target as HTMLElement | null)?.closest("a");
       if (!anchor || (anchor.target && anchor.target !== "_self")) return;
       const href = anchor.getAttribute("href");
-      if (!href || !isInternalHref(href) || sameDestination(href, pathname, search)) return;
+      if (!href || !isInternalHref(href) || sameDestination(href, pathname)) return;
       rememberAskPrompt(href);
       begin();
     }
@@ -73,11 +71,11 @@ export function NavigationProgress() {
       window.removeEventListener("aarla:navigate", begin);
       document.removeEventListener("click", onClick, true);
     };
-  }, [pathname, search]);
+  }, [pathname]);
 
   useEffect(() => {
     if (!pending) return;
-    const timeout = window.setTimeout(() => setPending(false), 15000);
+    const timeout = window.setTimeout(() => setPending(false), 8000);
     return () => window.clearTimeout(timeout);
   }, [pending]);
 

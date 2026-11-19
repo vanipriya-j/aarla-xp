@@ -1,7 +1,7 @@
-import { NavigationProgress } from "@/components/layout/navigation-progress";
+import { AppFrame } from "@/components/layout/app-frame";
 import type { Metadata } from "next";
 import { Fraunces, Outfit } from "next/font/google";
-import { Suspense } from "react";
+import type { ReactNode } from "react";
 import "./globals.css";
 
 const outfit = Outfit({
@@ -19,14 +19,11 @@ export const metadata: Metadata = {
   description: "Talk naturally. Aarla understands, curates a plan, and helps you make it happen.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={`${outfit.variable} ${fraunces.variable} h-full antialiased`}>
       <body className="min-h-full bg-cream font-sans text-ink">
-        <Suspense fallback={null}>
-          <NavigationProgress />
-        </Suspense>
-        {children}
+        <AppFrame>{children}</AppFrame>
       </body>
     </html>
   );

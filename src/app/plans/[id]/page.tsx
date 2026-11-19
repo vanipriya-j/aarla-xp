@@ -1,30 +1,41 @@
-import { getForYou, getPlan } from "@/application/contracts";
-import { AppShell } from "@/components/layout/app-shell";
+import { getPlan } from "@/application/contracts";
 import { PlanTimeline } from "@/components/plans/timeline";
 import { PlanFollowUp } from "@/components/plans/plan-follow-up";
 import { ResultActions } from "@/components/recommendations/result-actions";
 import { ExperienceImage } from "@/components/ui/experience-image";
+import { PageLoad } from "@/components/ui/page-load";
 import { ensureSeeded } from "@/db/ensure";
 import { formatDuration, formatSpend } from "@/lib/cn";
 import { notFound } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
-export default async function PlanDetailPage({
+export default function PlanDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  return (
+    <PageLoad message="Opening this plan…">
+      <PlanDetailBody params={params} />
+    </PageLoad>
+  );
+}
+
+async function PlanDetailBody({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
   await ensureSeeded();
   const { id } = await params;
-  const [data, detail] = await Promise.all([getForYou(), getPlan(id)]);
+  const detail = await getPlan(id);
   if (!detail) notFound();
 
   const { plan, circle, steps } = detail;
 
   return (
-    <AppShell personName={data.person.name} locationLabel={data.person.locationLabel} avatarUrl={data.person.avatarUrl}>
-      <article className="mx-auto max-w-3xl pb-16">
+    <article className="mx-auto max-w-3xl pb-16">
         <ExperienceImage src={plan.imageUrl} alt={plan.title} className="h-64 w-full xl:h-80" />
         <div className="px-5 pt-6">
           <p className="text-xs uppercase tracking-[0.16em] text-mist">{circle?.name ?? "Plan"}</p>
@@ -67,6 +78,5 @@ export default async function PlanDetailPage({
           </div>
         </div>
       </article>
-    </AppShell>
-  );
+    );
 }
