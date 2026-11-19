@@ -5,13 +5,22 @@ import { ProviderStrip } from "@/components/home/provider-strip";
 import { KarmaChart } from "@/components/karma/karma-chart";
 import { Icons } from "@/components/layout/icons";
 import { ExperienceImage } from "@/components/ui/experience-image";
+import { PageLoad } from "@/components/ui/page-load";
 import { PendingLink } from "@/components/ui/pending-link";
 import { ensureSeeded } from "@/db/ensure";
 import { IMG } from "@/lib/images";
 
 export const dynamic = "force-dynamic";
 
-export default async function HomePage() {
+export default function HomePage() {
+  return (
+    <PageLoad>
+      <HomeBody />
+    </PageLoad>
+  );
+}
+
+async function HomeBody() {
   await ensureSeeded();
   const data = await getForYou();
 

@@ -1,11 +1,20 @@
 import { getForYou } from "@/application/contracts";
 import { HeroPrompt } from "@/components/home/hero-prompt";
 import { LovedCard } from "@/components/home/plan-card";
+import { PageLoad } from "@/components/ui/page-load";
 import { ensureSeeded } from "@/db/ensure";
 
 export const dynamic = "force-dynamic";
 
-export default async function DiscoverPage() {
+export default function DiscoverPage() {
+  return (
+    <PageLoad>
+      <DiscoverBody />
+    </PageLoad>
+  );
+}
+
+async function DiscoverBody() {
   await ensureSeeded();
   const data = await getForYou();
 

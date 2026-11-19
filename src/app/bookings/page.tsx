@@ -1,10 +1,19 @@
 import { getBookings } from "@/application/contracts";
 import { ExperienceImage } from "@/components/ui/experience-image";
+import { PageLoad } from "@/components/ui/page-load";
 import { ensureSeeded } from "@/db/ensure";
 
 export const dynamic = "force-dynamic";
 
-export default async function BookingsPage() {
+export default function BookingsPage() {
+  return (
+    <PageLoad message="Opening bookings…">
+      <BookingsBody />
+    </PageLoad>
+  );
+}
+
+async function BookingsBody() {
   await ensureSeeded();
   const bookings = await getBookings();
 

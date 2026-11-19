@@ -7,10 +7,13 @@ import { ResultActions } from "@/components/recommendations/result-actions";
 import { ExperienceImage } from "@/components/ui/experience-image";
 import { PendingLink } from "@/components/ui/pending-link";
 import { formatDuration, priceBandLabel } from "@/lib/cn";
-import { DEMO_PERSON_ID } from "@/lib/constants";
+import { DEFAULT_ASK_QUERY, DEMO_PERSON_ID } from "@/lib/constants";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export function AskExperience({ query }: { query: string }) {
+export function AskExperience({ query }: { query?: string }) {
+  const searchParams = useSearchParams();
+  const prompt = (query ?? searchParams.get("q")?.trim()) || DEFAULT_ASK_QUERY;
   const [result, setResult] = useState<AgentResult | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -18,12 +21,12 @@ export function AskExperience({ query }: { query: string }) {
     const controller = new AbortController();
     setResult(null);
     setError(null);
-    sessionStorage.setItem("aarla:last-prompt", query);
+    sessionStorage.setItem("aarla:last-prompt", prompt);
 
     fetch("/api/agent/ask", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text: query }),
+      body: JSON.stringify({ text: prompt }),
       signal: controller.signal,
     })
       .then(async (response) => {
@@ -37,7 +40,7 @@ export function AskExperience({ query }: { query: string }) {
       });
 
     return () => controller.abort();
-  }, [query]);
+  }, [prompt]);
 
   if (error) {
     return (
@@ -45,14 +48,14 @@ export function AskExperience({ query }: { query: string }) {
         <p className="font-serif text-3xl">Something stalled</p>
         <p className="mt-4 text-ink-soft">{error}</p>
         <div className="mt-6">
-          <HeroPrompt variant="desktop" initialValue={query} />
+          <HeroPrompt variant="desktop" initialValue={prompt} />
         </div>
       </div>
     );
   }
 
   if (!result) {
-    return <AskLoading query={query} />;
+    return <AskLoading query={prompt} />;
   }
 
   return (
@@ -67,7 +70,7 @@ export function AskExperience({ query }: { query: string }) {
       ) : null}
 
       <div className="mt-6">
-        <HeroPrompt variant="desktop" initialValue={query} />
+        <HeroPrompt variant="desktop" initialValue={prompt} />
       </div>
 
       <div className="mt-8 flex flex-wrap gap-2">

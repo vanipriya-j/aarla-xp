@@ -1,11 +1,24 @@
 import { getPlans } from "@/application/contracts";
 import { PlanCard } from "@/components/home/plan-card";
+import { PageLoad } from "@/components/ui/page-load";
 import { PendingLink } from "@/components/ui/pending-link";
 import { ensureSeeded } from "@/db/ensure";
 
 export const dynamic = "force-dynamic";
 
-export default async function PlansPage({
+export default function PlansPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ tab?: string }>;
+}) {
+  return (
+    <PageLoad message="Opening your plans…">
+      <PlansBody searchParams={searchParams} />
+    </PageLoad>
+  );
+}
+
+async function PlansBody({
   searchParams,
 }: {
   searchParams: Promise<{ tab?: string }>;

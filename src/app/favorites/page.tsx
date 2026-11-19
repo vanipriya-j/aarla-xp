@@ -1,10 +1,19 @@
 import { getFavorites } from "@/application/contracts";
 import { ExperienceImage } from "@/components/ui/experience-image";
+import { PageLoad } from "@/components/ui/page-load";
 import { ensureSeeded } from "@/db/ensure";
 
 export const dynamic = "force-dynamic";
 
-export default async function FavoritesPage() {
+export default function FavoritesPage() {
+  return (
+    <PageLoad message="Opening favorites…">
+      <FavoritesBody />
+    </PageLoad>
+  );
+}
+
+async function FavoritesBody() {
   await ensureSeeded();
   const favorites = await getFavorites();
 

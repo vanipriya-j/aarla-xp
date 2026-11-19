@@ -1,11 +1,20 @@
 import { getForYou, getKarma } from "@/application/contracts";
 import { KarmaBars, KarmaChart } from "@/components/karma/karma-chart";
+import { PageLoad } from "@/components/ui/page-load";
 import { PendingLink } from "@/components/ui/pending-link";
 import { ensureSeeded } from "@/db/ensure";
 
 export const dynamic = "force-dynamic";
 
-export default async function KarmaPage() {
+export default function KarmaPage() {
+  return (
+    <PageLoad message="Opening karma…">
+      <KarmaBody />
+    </PageLoad>
+  );
+}
+
+async function KarmaBody() {
   await ensureSeeded();
   const [data, karma] = await Promise.all([getForYou(), getKarma()]);
 

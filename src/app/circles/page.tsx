@@ -1,9 +1,18 @@
 import { getCircles } from "@/application/contracts";
+import { PageLoad } from "@/components/ui/page-load";
 import { ensureSeeded } from "@/db/ensure";
 
 export const dynamic = "force-dynamic";
 
-export default async function CirclesPage() {
+export default function CirclesPage() {
+  return (
+    <PageLoad message="Opening circles…">
+      <CirclesBody />
+    </PageLoad>
+  );
+}
+
+async function CirclesBody() {
   await ensureSeeded();
   const circles = await getCircles();
 

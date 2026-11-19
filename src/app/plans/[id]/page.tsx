@@ -3,13 +3,26 @@ import { PlanTimeline } from "@/components/plans/timeline";
 import { PlanFollowUp } from "@/components/plans/plan-follow-up";
 import { ResultActions } from "@/components/recommendations/result-actions";
 import { ExperienceImage } from "@/components/ui/experience-image";
+import { PageLoad } from "@/components/ui/page-load";
 import { ensureSeeded } from "@/db/ensure";
 import { formatDuration, formatSpend } from "@/lib/cn";
 import { notFound } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
-export default async function PlanDetailPage({
+export default function PlanDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  return (
+    <PageLoad message="Opening this plan…">
+      <PlanDetailBody params={params} />
+    </PageLoad>
+  );
+}
+
+async function PlanDetailBody({
   params,
 }: {
   params: Promise<{ id: string }>;

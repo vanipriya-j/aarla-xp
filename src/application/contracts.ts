@@ -11,10 +11,7 @@ import { applyRejectionToMemory, shouldTouchAffinity, validateMemoryProposal } f
 import { PROVIDERS } from "@/services/providers";
 import { listConnectors } from "@/services/sources";
 
-export const getDemoPersonId = cache(async () => {
-  const demo = await prisma.person.findFirst({ where: { isDemo: true } });
-  return demo?.id ?? DEMO_PERSON_ID;
-});
+export const getDemoPersonId = cache(async () => DEMO_PERSON_ID);
 
 export async function submitLeisurePrompt(input: {
   text: string;
@@ -28,37 +25,39 @@ export async function submitLeisurePrompt(input: {
 
 export const getForYou = cache(async (personId?: string) => {
   const id = personId ?? (await getDemoPersonId());
-  const person = await prisma.person.findUniqueOrThrow({ where: { id } });
-  const circles = await prisma.circle.findMany({ where: { personId: id }, include: { members: true } });
-  const experiences = await prisma.leisureExperience.findMany({
-    where: { personId: id },
-    include: { activity: true },
-    orderBy: { happenedAt: "desc" },
-  });
+  const [person, circles, experiences, upcoming, handpicked, bookings, memories] = await Promise.all([
+    prisma.person.findUniqueOrThrow({ where: { id } }),
+    prisma.circle.findMany({ where: { personId: id }, include: { members: true } }),
+    prisma.leisureExperience.findMany({
+      where: { personId: id },
+      include: { activity: true },
+      orderBy: { happenedAt: "desc" },
+    }),
+    prisma.plan.findMany({
+      where: { personId: id, status: { in: ["UPCOMING", "SAVED"] } },
+      include: { steps: { orderBy: { sortOrder: "asc" } } },
+      orderBy: { startAt: "asc" },
+      take: 4,
+    }),
+    prisma.plan.findMany({
+      where: { personId: id, status: { in: ["SAVED", "DRAFT", "UPCOMING"] }, personality: { not: null } },
+      include: { steps: true },
+      take: 4,
+      orderBy: { createdAt: "desc" },
+    }),
+    prisma.booking.findMany({
+      where: { personId: id, status: { in: ["CONFIRMED", "UPCOMING"] } },
+      orderBy: { startsAt: "asc" },
+      take: 3,
+    }),
+    prisma.memory.findMany({
+      where: { personId: id, status: "ACTIVE", layer: { in: ["OBSERVATION", "BEHAVIOURAL"] } },
+      orderBy: { confidence: "desc" },
+      take: 3,
+    }),
+  ]);
   const karma = computeKarma(experiences.map(mapExperience), 30);
-  const upcoming = await prisma.plan.findMany({
-    where: { personId: id, status: { in: ["UPCOMING", "SAVED"] } },
-    include: { steps: { orderBy: { sortOrder: "asc" } } },
-    orderBy: { startAt: "asc" },
-    take: 4,
-  });
   const loved = experiences.filter((item) => item.loved).slice(0, 6);
-  const handpicked = await prisma.plan.findMany({
-    where: { personId: id, status: { in: ["SAVED", "DRAFT", "UPCOMING"] }, personality: { not: null } },
-    include: { steps: true },
-    take: 4,
-    orderBy: { createdAt: "desc" },
-  });
-  const bookings = await prisma.booking.findMany({
-    where: { personId: id, status: { in: ["CONFIRMED", "UPCOMING"] } },
-    orderBy: { startsAt: "asc" },
-    take: 3,
-  });
-  const memories = await prisma.memory.findMany({
-    where: { personId: id, status: "ACTIVE", layer: { in: ["OBSERVATION", "BEHAVIOURAL"] } },
-    orderBy: { confidence: "desc" },
-    take: 3,
-  });
 
   return {
     person: mapPerson(person),
@@ -199,12 +198,14 @@ export async function getFavorites(personId?: string) {
 
 export async function getProfile(personId?: string) {
   const id = personId ?? (await getDemoPersonId());
-  const person = await prisma.person.findUniqueOrThrow({ where: { id } });
-  const memories = await prisma.memory.findMany({
-    where: { personId: id, status: "ACTIVE" },
-    include: { evidence: true },
-    orderBy: { confidence: "desc" },
-  });
+  const [person, memories] = await Promise.all([
+    prisma.person.findUniqueOrThrow({ where: { id } }),
+    prisma.memory.findMany({
+      where: { personId: id, status: "ACTIVE" },
+      include: { evidence: true },
+      orderBy: { confidence: "desc" },
+    }),
+  ]);
   return { person: mapPerson(person), memories };
 }
 

@@ -1,9 +1,18 @@
 import { getProfile } from "@/application/contracts";
+import { PageLoad } from "@/components/ui/page-load";
 import { ensureSeeded } from "@/db/ensure";
 
 export const dynamic = "force-dynamic";
 
-export default async function ProfilePage() {
+export default function ProfilePage() {
+  return (
+    <PageLoad message="Opening profile…">
+      <ProfileBody />
+    </PageLoad>
+  );
+}
+
+async function ProfileBody() {
   await ensureSeeded();
   const profile = await getProfile();
 
